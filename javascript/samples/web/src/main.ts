@@ -10,10 +10,26 @@ let realtimeStreaming: LowLevelRTClient;
 let audioRecorder: Recorder;
 let audioPlayer: Player;
 
+const azureEndpoint = import.meta.env.VITE_AZURE_OPENAI_ENDPOINT || '';
+const azureDeployment = import.meta.env.VITE_AZURE_OPENAI_DEPLOYMENT || '';
+const azureApiKey = import.meta.env.VITE_AZURE_OPENAI_API_KEY || '';
+
 async function start_realtime(endpoint: string, apiKey: string, deploymentOrModel: string) {
   if (isAzureOpenAI()) {
+    endpoint = endpoint || azureEndpoint;
+    apiKey = apiKey || azureApiKey;
+    deploymentOrModel = deploymentOrModel || azureDeployment;
+
+    if (!endpoint || !deploymentOrModel || !apiKey) {
+      throw new Error("Azure OpenAI endpoint, deployment, and API key are required.");
+    }
+
     realtimeStreaming = new LowLevelRTClient(new URL(endpoint), { key: apiKey }, { deployment: deploymentOrModel });
   } else {
+    if (!apiKey || !deploymentOrModel) {
+      throw new Error("OpenAI API key and model are required.");
+    }
+
     realtimeStreaming = new LowLevelRTClient({ key: apiKey }, { model: deploymentOrModel });
   }
 
@@ -30,9 +46,9 @@ async function start_realtime(endpoint: string, apiKey: string, deploymentOrMode
   await Promise.all([resetAudio(true), handleRealtimeMessages()]);
 }
 
-function createConfigMessage() : SessionUpdateMessage {
+function createConfigMessage(): SessionUpdateMessage {
 
-  let configMessage : SessionUpdateMessage = {
+  let configMessage: SessionUpdateMessage = {
     type: "session.update",
     session: {
       turn_detection: {
@@ -190,8 +206,15 @@ function isAzureOpenAI(): boolean {
 }
 
 function guessIfIsAzureOpenAI() {
-  const endpoint = (formEndpointField.value || "").trim();
+  const endpoint = (formEndpointField.value || azureEndpoint || "").trim();
   formAzureToggle.checked = endpoint.indexOf('azure') > -1;
+}
+
+function setInitialValues() {
+  if (azureEndpoint) formEndpointField.value = azureEndpoint;
+  if (azureDeployment) formDeploymentOrModelField.value = azureDeployment;
+  if (azureApiKey) formApiKeyField.value = azureApiKey;
+  guessIfIsAzureOpenAI();
 }
 
 function setFormInputState(state: InputState) {
@@ -220,6 +243,7 @@ function makeNewTextBlock(text: string = "") {
   let newElement = document.createElement("p");
   newElement.textContent = text;
   formReceivedTextContainer.appendChild(newElement);
+  scrollToBottom();
 }
 
 function appendToTextBlock(text: string) {
@@ -228,34 +252,43 @@ function appendToTextBlock(text: string) {
     makeNewTextBlock();
   }
   textElements[textElements.length - 1].textContent += text;
+  scrollToBottom();
+}
+
+function scrollToBottom() {
+  formReceivedTextContainer.scrollTop = formReceivedTextContainer.scrollHeight;
 }
 
 formStartButton.addEventListener("click", async () => {
   setFormInputState(InputState.Working);
 
-  const endpoint = formEndpointField.value.trim();
-  const key = formApiKeyField.value.trim();
-  const deploymentOrModel = formDeploymentOrModelField.value.trim();
+  let endpoint = formEndpointField.value.trim() || azureEndpoint;
+  let key = formApiKeyField.value.trim() || azureApiKey;
+  let deploymentOrModel = formDeploymentOrModelField.value.trim() || azureDeployment;
 
-  if (isAzureOpenAI() && !endpoint && !deploymentOrModel) {
+  if (isAzureOpenAI() && (!endpoint || !deploymentOrModel)) {
     alert("Endpoint and Deployment are required for Azure OpenAI");
+    setFormInputState(InputState.ReadyToStart);
     return;
   }
 
   if (!isAzureOpenAI() && !deploymentOrModel) {
     alert("Model is required for OpenAI");
+    setFormInputState(InputState.ReadyToStart);
     return;
   }
 
   if (!key) {
     alert("API Key is required");
+    setFormInputState(InputState.ReadyToStart);
     return;
   }
 
   try {
-    start_realtime(endpoint, key, deploymentOrModel);
+    await start_realtime(endpoint, key, deploymentOrModel);
   } catch (error) {
     console.log(error);
+    makeNewTextBlock(`[Error]: ${error.message}`);
     setFormInputState(InputState.ReadyToStart);
   }
 });
@@ -270,4 +303,5 @@ formStopButton.addEventListener("click", async () => {
 formEndpointField.addEventListener('change', async () => {
   guessIfIsAzureOpenAI();
 });
+setInitialValues();
 guessIfIsAzureOpenAI();
