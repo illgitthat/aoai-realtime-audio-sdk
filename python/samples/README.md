@@ -23,8 +23,17 @@ source venv/bin/activate
 
 ### 2. Install Dependencies
 
-Once the virtual environment is activated, install the required dependencies using `pip`:
+Once the virtual environment is activated, download the latest package wheels using the provided scripts and install the required dependencies using `pip`:
 
+- [download-pkg.sh](./download-pkg.sh) for bash
+    > Note that this script requires `jq` to be installed.
+
+- [download-pkg.ps1](./download-pkg.ps1) for PowerShell
+
+These can be run by typing `./download-pkg.sh` or `pwsh ./download-pkg.ps1` respectively.
+
+
+Next, install the dependencies:
 ```sh
 pip install -r requirements.txt
 pip install rtclient-0.4.0-py3-none-any.whl

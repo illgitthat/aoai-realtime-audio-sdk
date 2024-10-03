@@ -133,6 +133,7 @@ class RTLowLevelClient:
         self._session = ClientSession(base_url=self._url)
         self._model = model
         self._azure_deployment = azure_deployment
+        self.request_id: Optional[uuid.UUID] = None
 
     def _get_auth(self):
         if self._token_credential:
@@ -385,6 +386,10 @@ class RTClient:
         self._response_map: dict[str, str] = {}
         self._transcription_enabled = False
 
+    @property
+    def request_id(self) -> uuid.UUID | None:
+        return self._client.request_id
+
     async def _receive_message(self):
         async for message in self._client:
             return message
@@ -514,7 +519,7 @@ class RTClient:
         if output_audio_format is not None:
             session_update_params.output_audio_format = output_audio_format
         if input_audio_transcription is not None:
-            session_update_params.input_audio_transcription
+            session_update_params.input_audio_transcription = input_audio_transcription
         if turn_detection is not None:
             session_update_params.turn_detection = turn_detection
         if tools is not None:
