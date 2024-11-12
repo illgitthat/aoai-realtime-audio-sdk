@@ -16,7 +16,7 @@ export interface ServerVAD {
   silence_duration_ms?: number;
 }
 
-export type TurnDetection = NoTurnDetection | ServerVAD;
+export type TurnDetection = ServerVAD | null;
 
 export interface FunctionToolChoice {
   type: "function";
@@ -44,7 +44,7 @@ export interface SessionUpdateParams {
   instructions?: string;
   input_audio_format?: AudioFormat;
   output_audio_format?: AudioFormat;
-  input_audio_transcription?: InputAudioTranscription;
+  input_audio_transcription?: InputAudioTranscription | null;
   turn_detection?: TurnDetection;
   tools?: ToolsDefinition;
   tool_choice?: ToolChoice;
@@ -282,17 +282,18 @@ export type ResponseItemContentPart =
 
 export interface ResponseItemBase {
   id?: string;
-  status: ResponseItemStatus;
 }
 
 export interface ResponseMessageItem extends ResponseItemBase {
   type: MessageItemType;
+  status: ResponseItemStatus;
   role: MessageRole;
   content: ResponseItemContentPart[];
 }
 
 export interface ResponseFunctionCallItem extends ResponseItemBase {
   type: "function_call";
+  status: ResponseItemStatus;
   name: string;
   call_id: string;
   arguments: string;

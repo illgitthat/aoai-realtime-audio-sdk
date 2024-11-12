@@ -6,6 +6,9 @@ import dts from "rollup-plugin-dts";
 import typescript from "@rollup/plugin-typescript";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import alias from "@rollup/plugin-alias";
+import replace from "@rollup/plugin-replace";
+
+import pkg from "./package.json" assert { type: "json" };
 
 export default [
   {
@@ -23,13 +26,19 @@ export default [
       },
     ],
     plugins: [
+      replace({
+        values: {
+          PACKAGE_VERSION: pkg.version,
+        },
+        preventAssignment: true,
+      }),
       nodeResolve({
         preferBuiltins: true,
       }),
       commonjs(),
       typescript({
         downlevelIteration: true,
-        exclude: ["**/*.spec.ts", "**/*.test.ts"],
+        exclude: ["vitest.workspace.mts", "test/**/*.ts"],
       }),
     ],
   },
@@ -55,11 +64,15 @@ export default [
             find: "./websocket",
             replacement: "./websocket-browser",
           },
+          {
+            find: "./util/connection-settings",
+            replacement: "./util/connection-settings-browser",
+          },
         ],
       }),
       typescript({
         downlevelIteration: true,
-        exclude: ["**/*.spec.ts", "**/*.test.ts"],
+        exclude: ["vitest.workspace.mts", "test/**/*.ts"],
       }),
       nodeResolve({
         browser: true,
