@@ -33,22 +33,22 @@
           </div>
           <div class="input-group">
           <div class="button-group">
-            <button id="start-recording" type="button">Record</button>
+            <button id="start-recording" type="button">Start</button>
             <button id="stop-recording" type="button" disabled="true">Stop</button>
           </div>
           <div class="input-group">
             <label for="session-instructions">System Message</label>
-            <textarea id="session-instructions" placeholder="Optional instructions for the session, e.g. 'You talk like a pirate.'" rows="4"></textarea>
+            <textarea id="session-instructions" placeholder="Optional instructions for the assistant, e.g. 'You talk like a pirate.'" rows="4"></textarea>
           </div>
           <div class="input-group">
             <label for="temperature">Temperature</label>
-            <input id="temperature" type="number" min="0.6" max="1.2" step="0.05" placeholder="0.6-1.2 (default 0.8)"/>
+            <input id="temperature" type="number" min="0.6" max="1.2" step="0.05" value="0.8" placeholder="0.6-1.2 (default 0.8)"/>
           </div>
           <div class="input-group">
             <label for="voice">Voice</label>
               <select id="voice">
                 <option></option>
-                <option>alloy</option>
+                <option selected>alloy</option>
                 <option>ash</option>
                 <option>ballad</option>
                 <option>coral</option>
