@@ -22,42 +22,49 @@
           <div class="input-group">
             <label for="endpoint">Endpoint</label>
             <input id="endpoint" type="text" placeholder="Enter resource/endpoint URL" />
+
             <div class="toggle-group">
               <label for="azure-toggle">Azure OpenAI</label>
               <input id="azure-toggle" type="checkbox" checked />
             </div>
-              <label for="api-key">API Key</label>
+
+            <label for="api-key">API Key</label>
             <input id="api-key" type="password" placeholder="Enter API key" />
+
             <label for="deployment-or-model">Deployment</label>
             <input id="deployment-or-model" type="text" placeholder="Enter deployment/model, e.g. gpt-4o-realtime-preview-2024-10-01" />
           </div>
-          <div class="input-group">
+
           <div class="button-group">
             <button id="start-recording" type="button">Start</button>
             <button id="stop-recording" type="button" disabled="true">Stop</button>
           </div>
+
           <div class="input-group">
             <label for="session-instructions">System Message</label>
-            <textarea id="session-instructions" placeholder="Optional instructions for the assistant, e.g. 'You talk like a pirate.'" rows="4"></textarea>
+            <textarea id="session-instructions" placeholder="Optional instructions for the assistant, e.g. 'You talk like a pirate.'" rows="3"></textarea>
           </div>
+
           <div class="input-group">
             <label for="temperature">Temperature</label>
             <input id="temperature" type="number" min="0.6" max="1.2" step="0.05" value="0.8" placeholder="0.6-1.2 (default 0.8)"/>
           </div>
+
           <div class="input-group">
             <label for="voice">Voice</label>
-              <select id="voice">
-                <option></option>
-                <option selected>alloy</option>
-                <option>ash</option>
-                <option>ballad</option>
-                <option>coral</option>
-                <option>echo</option>
-                <option>sage</option>
-                <option>shimmer</option>
-                <option>verse</option>
-              </select>
+            <select id="voice">
+              <option value="">Select a voice</option>
+              <option value="alloy" selected>Alloy</option>
+              <option value="ash">Ash</option>
+              <option value="ballad">Ballad</option>
+              <option value="coral">Coral</option>
+              <option value="echo">Echo</option>
+              <option value="sage">Sage</option>
+              <option value="shimmer">Shimmer</option>
+              <option value="verse">Verse</option>
+            </select>
           </div>
+
           <div class="button-group">
             <button id="clear-all" type="button">Clear all</button>
           </div>
