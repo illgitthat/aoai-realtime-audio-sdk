@@ -288,9 +288,13 @@ formStartButton.addEventListener("click", async () => {
 
   try {
     await start_realtime(endpoint, key, deploymentOrModel);
-  } catch (error) {
+  } catch (error: unknown) {
     console.log(error);
-    makeNewTextBlock(`[Error]: ${error.message}`);
+    if (error instanceof Error) {
+      makeNewTextBlock(`[Error]: ${error.message}`);
+    } else {
+      makeNewTextBlock('[Error]: An unknown error occurred');
+    }
     setFormInputState(InputState.ReadyToStart);
   }
 });
